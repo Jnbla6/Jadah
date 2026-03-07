@@ -9,21 +9,32 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            # 1. Receive data from client
+            # 1. Receive data
             data = await websocket.receive_text()
             payload = ClientMessage.parse_raw(data)
+            print("\n" + "="*40)
+            print(f"🎯 New Task Received: '{payload.task}'")
+            print("📸 1. Processing screenshot...")
             
-            # 2. Vision Engine: Process frame and get elements
+            # 2. Vision Engine
             elements = process_frame(payload.image_base64)
+            print(f"👀 2. Vision Engine found {len(elements)} text elements on your screen!")
             
-            # 3. AI Planner: Determine what to click based on task and screen elements
+           # 3. AI Planner
+            print("🧠 3. Local AI is thinking... (Please wait, this can take 15-60 seconds!)")
             ai_output = get_next_step(payload.task, elements)
             
-            # 4. Instruction Generator: Format the response
+            # 4. Instruction Generator
+            if ai_output and ai_output.pointer_x is not None:
+                print(f"✅ 4. AI found the button! Drawing arrow at X:{ai_output.pointer_x}, Y:{ai_output.pointer_y}")
+            else:
+                print("⚠️ 4. AI got confused by too much text and couldn't find the coordinates!")
+                
             response = generate_response(ai_output)
             
             # 5. Send back to client
             await websocket.send_text(response.json())
+            print("="*40 + "\n")
             
     except WebSocketDisconnect:
         print("Client disconnected.")

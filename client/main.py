@@ -1,4 +1,6 @@
 import sys
+import os
+os.environ["QT_ENABLE_HIGHDPI_SCALING"] = "0"
 from PySide6.QtWidgets import QApplication
 from client.task_input_ui import TaskInputUI
 from client.overlay_renderer import OverlayRenderer
