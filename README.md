@@ -1,8 +1,31 @@
-# AI Guidance Agent MVP
+# جادة AI 🎯
 
-This is an MVP for an AI Guidance Agent that visually guides users on their screen using computer vision, OpenAI, and a transparent PySide6 overlay.
+**جادة AI** هو مساعد ذكي لسطح المكتب يعمل كمرشد بصري تفاعلي في الوقت الفعلي. بدلاً من مجرد إخبارك بكيفية القيام بشيء ما، فإنه "ينظر" إلى شاشتك، ويفهم واجهة المستخدم، ويرسم سهماً مرئياً يشير بالضبط إلى الزر أو العنصر الذي تحتاج إلى النقر عليه لإنجاز مهمتك.
 
-## 1. Install Dependencies
-Ensure you have Python 3.9+ installed. Then install the required Python packages:
+يعتمد المشروع على هيكلية العميل والخادم (Client-Server):
+* **الخادم (العقل والعيون):** مبني باستخدام FastAPI، ويعتمد على Tesseract OCR لاكتشاف النصوص، ونموذج الذكاء الاصطناعي Gemini من جوجل (Multimodal AI) لتحليل الشاشة بصرياً.
+* **العميل (الواجهة الشفافة):** تطبيق خفيف وشفاف لسطح المكتب مبني باستخدام PySide6، يقوم بالتقاط صور للشاشة ورسم أسهم التوجيه في الوقت الفعلي.
+
+---
+
+## 📋 المتطلبات الأساسية
+
+قبل البدء في إعداد المشروع، تأكد من تثبيت البرامج التالية على جهازك:
+
+1. **Python 3.9 أو أحدث** (تأكد من إضافة بايثون إلى مسار النظام PATH أثناء التثبيت).
+2. **برنامج Tesseract OCR (لنظام ويندوز):** * قم بتحميل نسخة التثبيت الخاصة بويندوز من هنا: [UB-Mannheim Tesseract installers](https://github.com/UB-Mannheim/tesseract/wiki)
+   * قم بتثبيته في المسار الافتراضي: `C:\Program Files\Tesseract-OCR`
+   * *(ملاحظة: إذا قمت بتثبيته في مسار آخر، يجب عليك تحديث المسار `tesseract_cmd` داخل ملف `server/vision_engine.py`)*
+3. **مفتاح واجهة برمجة تطبيقات (API Key) لـ Google Gemini:** يمكنك الحصول عليه مجاناً من [Google AI Studio](https://aistudio.google.com/).
+
+---
+
+## 🛠️ التثبيت والإعداد
+
+**1. افتح مجلد المشروع**
+افتح موجه الأوامر (Terminal) وانتقل إلى مجلد المشروع (`Jadah`).
+
+**2. تثبيت مكتبات بايثون المطلوبة**
+قم بتشغيل الأمر التالي لتثبيت جميع المكتبات اللازمة (FastAPI, OpenCV, PySide6, Google GenAI, وغيرها):
 ```bash
 pip install -r requirements.txt
