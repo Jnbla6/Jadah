@@ -26,72 +26,18 @@ def process_frame(image_base64: str) -> List[ScreenElement]:
     
     elements = []
     n_boxes = len(d['text'])
-    
-    # We will group words that belong to the same block, paragraph, and line
-    current_group = None
-
     for i in range(n_boxes):
         text = d['text'][i].strip()
         conf = int(d['conf'][i])
         
         # Filter out empty text and low confidence predictions
         if int(conf) > 40 and text:
-            block_num = d['block_num'][i]
-            par_num = d['par_num'][i]
-            line_num = d['line_num'][i]
-            
-            x = d['left'][i]
-            y = d['top'][i]
-            w = d['width'][i]
-            h = d['height'][i]
-            
-            if current_group is None:
-                current_group = {
-                    'text': text, 'x': x, 'y': y, 'w': w, 'h': h,
-                    'block': block_num, 'par': par_num, 'line': line_num
-                }
-            else:
-                # Same line check
-                if (current_group['block'] == block_num and 
-                    current_group['par'] == par_num and 
-                    current_group['line'] == line_num and
-                    # ensure words are relatively close horizontally (e.g., < 30px apart)
-                    x - (current_group['x'] + current_group['w']) < 30):
-                    
-                    # Merge them
-                    current_group['text'] += " " + text
-                    # New bounding box
-                    new_x = min(current_group['x'], x)
-                    new_y = min(current_group['y'], y)
-                    new_w = max(current_group['x'] + current_group['w'], x + w) - new_x
-                    new_h = max(current_group['y'] + current_group['h'], y + h) - new_y
-                    
-                    current_group['x'] = new_x
-                    current_group['y'] = new_y
-                    current_group['w'] = new_w
-                    current_group['h'] = new_h
-                else:
-                    # Save the old group and start a new one
-                    elements.append(ScreenElement(
-                        text=current_group['text'],
-                        x=current_group['x'],
-                        y=current_group['y'],
-                        width=current_group['w'],
-                        height=current_group['h']
-                    ))
-                    current_group = {
-                        'text': text, 'x': x, 'y': y, 'w': w, 'h': h,
-                        'block': block_num, 'par': par_num, 'line': line_num
-                    }
-                    
-    # Append the last group
-    if current_group is None == False:
-        elements.append(ScreenElement(
-            text=current_group['text'],
-            x=current_group['x'],
-            y=current_group['y'],
-            width=current_group['w'],
-            height=current_group['h']
-        ))
+            elements.append(ScreenElement(
+                text=text,
+                x=d['left'][i],
+                y=d['top'][i],
+                width=d['width'][i],
+                height=d['height'][i]
+            ))
             
     return elements
