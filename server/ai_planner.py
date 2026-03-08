@@ -36,6 +36,9 @@ def get_next_step(task: str, elements: List[ScreenElement]) -> Optional[AIPlanOu
     ui_elements = []
     bad_chars = ['"', "'", "‘", "’", "“", "”", "_", "(", ")", "=", "{", "}", "[", "]", ";", "*"]
     
+    # Assume standard 1080p or 1440p screen for center document detection
+    # We heavily penalize coordinates that are in the middle of the screen (the "canvas")
+    
     for el in elements:
         text_raw = el.text.strip()
         text_lower = text_raw.lower()
@@ -43,11 +46,23 @@ def get_next_step(task: str, elements: List[ScreenElement]) -> Optional[AIPlanOu
         if len(text_lower) < 1 or any(char in text_raw for char in bad_chars):
             continue
             
-        # تحديد مناطق الواجهة الحقيقية وتجاهل منتصف الشاشة (منطقة الأكواد)
-        is_top_menu = el.y < 80 
-        is_left_dropdown = el.x < 400 and el.y < 800 
-        is_top_right = el.x > 1000 and el.y < 80 
+        # تحديد مناطق الواجهة الحقيقية وتجاهل منتصف الشاشة (منطقة الأكواد أو المستند)
+        # Top ribbon/menu (e.g. File, Edit, View, Save) is almost always Y < 120
+        is_top_menu = el.y < 120 
         
+        # Left sidebar (e.g. VSCode explorer, settings)
+        is_left_dropdown = el.x < 400 and el.y < 800 
+        
+        # Top right (e.g. Close X, user profile)
+        is_top_right = el.x > 1000 and el.y < 120 
+        
+        # Center Screen "Danger Zone" (Document canvas where text is just text, not buttons)
+        is_center_canvas = (el.x > 300 and el.x < 1500) and (el.y > 150 and el.y < 800)
+        
+        # If it's in the center canvas, it's highly likely just text in a document, NOT a button!
+        if is_center_canvas:
+            continue
+            
         if not (is_top_menu or is_left_dropdown or is_top_right):
             continue
 

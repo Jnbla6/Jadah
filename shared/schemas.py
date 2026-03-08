@@ -15,12 +15,15 @@ class ScreenElement(BaseModel):
 class ClientMessage(BaseModel):
     image_base64: str
     task: str
+    mouse_x: Optional[int] = None
+    mouse_y: Optional[int] = None
 
 class Instruction(BaseModel):
     step: int
     instruction: str
     pointer: Optional[Point]
     visual: str = "arrow"
+    is_target_reached: bool = False
 
 class ServerResponse(BaseModel):
     instruction: Optional[Instruction]

@@ -1,6 +1,7 @@
 import asyncio
 import json
 from PySide6.QtCore import QThread, Signal
+from PySide6.QtGui import QCursor
 import websockets
 from client.screen_capture import capture_frame_base64
 from shared.schemas import ClientMessage, ServerResponse
@@ -37,10 +38,15 @@ class WebSocketWorker(QThread):
                         await asyncio.sleep(1)
                         continue
                         
+                    # 1.5 Get current mouse position
+                    cursor_pos = QCursor.pos()
+                    
                     # 2. Prepare payload
                     payload = ClientMessage(
                         image_base64=frame_b64,
-                        task=self.task_text
+                        task=self.task_text,
+                        mouse_x=cursor_pos.x(),
+                        mouse_y=cursor_pos.y()
                     )
                     
                     # 3. Send to server

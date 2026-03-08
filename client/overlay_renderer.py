@@ -28,6 +28,7 @@ class OverlayRenderer(QWidget):
             self.target_point = None
             
         self.instruction_text = instruction_data.get("instruction", "")
+        self.is_target_reached = instruction_data.get("is_target_reached", False)
         self.update()
         
     def clear_instruction(self):
@@ -73,7 +74,29 @@ class OverlayRenderer(QWidget):
         painter.drawPolygon(arrow_head)
 
         # 4. رسم صندوق النص بشكل عصري فوق السهم
-        if self.instruction_text:
+        if getattr(self, 'is_target_reached', False):
+            painter.setFont(QFont("Segoe UI", 16, QFont.Bold))
+            text_rect = painter.fontMetrics().boundingRect("✨ اضغط هنا! ✨")
+            
+            box_rect = QRect(tx - text_rect.width()//2 - 20, 
+                             ty - text_rect.height() - 40, 
+                             text_rect.width() + 40, 
+                             text_rect.height() + 20)
+
+            # Green glowing background
+            painter.setPen(QPen(QColor(46, 204, 113, 255), 3))
+            painter.setBrush(QColor(39, 174, 96, 230))
+            painter.drawRoundedRect(box_rect, 10, 10)
+
+            painter.setPen(QColor(255, 255, 255))
+            painter.drawText(box_rect, Qt.AlignCenter, "✨ اضغط هنا! ✨")
+            
+            # Draw a subtle green ring instead of red
+            painter.setPen(QPen(QColor(46, 204, 113, 255), 4))
+            painter.setBrush(QColor(46, 204, 113, 50))
+            painter.drawEllipse(tx - 30, ty - 30, 60, 60)
+            
+        elif self.instruction_text:
             painter.setFont(QFont("Segoe UI", 14, QFont.Bold))
             text_rect = painter.fontMetrics().boundingRect(self.instruction_text)
             
