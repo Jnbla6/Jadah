@@ -85,7 +85,7 @@ Jadah/
 
 ---
 
-## <a id="english"></a> 🇬🇧 Jadah AI - Desktop Assistant for Interactive Visual Guidance
+## <a id="english"></a> Jadah AI - Desktop Assistant for Interactive Visual Guidance
 
 **Jadah AI** is an advanced desktop assistant that acts as a real-time, interactive visual guide. Purpose-built for employee training and onboarding, Jadah AI does not automate tasks or execute actions on behalf of the user. Instead, its core mission is to **teach and guide employees step-by-step**.
 
